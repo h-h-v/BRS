@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ from_location }} to {{ to_location }} Bus Online Tickets Booking | ClicBus</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <style>
+        /* Add necessary styles for the bus result card */
+        .bus-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bus-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .bus-info div {
+            margin-bottom: 5px;
+        }
+        .bus-info .bus-name {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .bus-info .bus-type {
+            color: #888;
+        }
+        .bus-schedule {
+            text-align: center;
+        }
+        .bus-schedule div {
+            margin-bottom: 5px;
+        }
+        .bus-price {
+            text-align: right;
+        }
+        .bus-price .price {
+            font-size: 1.5em;
+            color: #E53935;
+        }
+        .view-seats {
+            background-color: #E53935;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .navbar-right {
+            float: right;
+        }
+        .navbar-right span {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+        <nav id="navBar">
+            <a href="/">Home</a>
+            <a href="#">Book Tickets</a>
+            <a href="#">My Bookings</a>
+            <a href="#">Help</a>
+            <div class="navbar-right">
+                {% if username %}
+                    <span>Welcome, {{ username }}!</span>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <button class="login-button" id="loginBtn">Login</button>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Bus Search Results</h1>
+        <div class="location-info">
+            <h3>{{ from_location }} &#x27F6; {{ to_location }}</h3>
+        </div>
+        {% if buses %}
+            {% for bus in buses %}
+                <div class="bus-card">
+                    <div class="bus-info">
+                        <div class="bus-name">{{ bus[1] }}</div>
+                        <div class="bus-type">{{ bus[4] }}</div>
+                        <div>Route: {{ bus[2] }}</div>
+                    </div>
+                    <div class="bus-schedule">
+                        <div>Departure: 19:00</div>
+                        <div>Duration: 12h 00m</div>
+                        <div>Arrival: 07:00</div>
+                        <div>Date: {{ bus[6].strftime("%d-%b") }}</div>
+                    </div>
+                    <div class="bus-price">
+                        <div class="price">INR 1800</div>
+                        <div>Seats available: 7</div>
+                        <div>Window: 3</div>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('view_seats', bus_id=bus[0]) }}" class="view-seats">VIEW SEATS</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No buses found for your search criteria.</p>
+        {% endif %}
+        <a href="/">Go back</a>
+    </div>
+</body>
+</html>

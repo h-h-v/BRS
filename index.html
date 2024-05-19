@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClicBus</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+        <nav id="navBar">
+            <a href="/">Home</a>
+            <a href="#">Book Tickets</a>
+            <a href="#">My Bookings</a>
+            <a href="#">Help</a>
+            {% if session.get('username') %}
+                <span>Welcome, {{ session['username'] }}</span>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <button class="login-button" id="loginBtn">Login</button>
+            {% endif %}
+        </nav>
+    </header>
+    <div class="main-image">
+        <img src="{{ url_for('static', filename='img/busbanner.jpg') }}" alt="Main Image">
+        <div class="overlay">
+            <form class="search-form" id="searchForm" action="{{ url_for('search') }}" method="post">
+                <input type="text" name="from" placeholder="From">
+                <input type="text" name="to" placeholder="To">
+                <input type="date" name="date" placeholder="Date">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form class="login-form" action="{{ url_for('login') }}" method="post">
+                <h2>Login</h2>
+                <input type="text" name="username" id="usernameInput" placeholder="Username" required>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var modal = document.getElementById("loginModal");
+            var loginBtn = document.getElementById("loginBtn");
+            var span = document.getElementsByClassName("close")[0];
+
+            loginBtn.onclick = function() {
+                modal.style.display = "block";
+                modal.classList.add("floatIn");
+            }
+
+            span.onclick = function() {
+                modal.style.display = "none";
+                modal.classList.remove("floatIn");
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    modal.classList.remove("floatIn");
+                }
+            }
+
+            function handleLogin(username) {
+                var usernameSpan = document.createElement("span");
+                usernameSpan.textContent = username;
+                var navBar = document.getElementById("navBar");
+                navBar.appendChild(usernameSpan);
+                loginBtn.style.display = "none"; // Hide the login button
+            }
+
+            document.querySelector('.login-form').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                var username = document.getElementById('usernameInput').value;
+                handleLogin(username);
+                modal.style.display = "none";
+                modal.classList.remove("floatIn");
+            });
+        });
+    </script>
+</body>
+</html>

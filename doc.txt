@@ -1,0 +1,62 @@
+Create Table Query:
+To create the stock table in PostgreSQL, execute the following SQL CREATE TABLE query:
+
+sql
+Copy code
+CREATE TABLE IF NOT EXISTS stock (
+    id SERIAL PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL,
+    quantity INTEGER NOT NULL,
+    price DECIMAL(10, 2) NOT NULL
+);
+This query creates a table named stock with the following columns:
+
+id: Auto-incrementing primary key.
+product_name: VARCHAR field to store the name of the product.
+quantity: INTEGER field to store the quantity of the product.
+price: DECIMAL field to store the price of the product.
+Insert Queries:
+To insert products into the stock table, execute the following SQL INSERT query:
+
+python
+Copy code
+import psycopg2
+
+# Connect to PostgreSQL database
+conn_string = 'postgres://username:password@host:port/database_name'
+conn = psycopg2.connect(conn_string)
+
+# Create a cursor object to execute SQL queries
+cur = conn.cursor()
+
+# Sample product data
+products_data = [
+    ('Rice', 100, 10.00),
+    ('Lentils', 50, 20.00),
+    ('Sugar', 75, 15.00)
+    # Add more products as needed
+]
+
+# SQL statement to insert products into the 'stock' table
+insert_query = '''
+INSERT INTO stock (product_name, quantity, price) 
+VALUES (%s, %s, %s);
+'''
+
+# Execute the SQL statement to insert products
+cur.executemany(insert_query, products_data)
+
+# Commit the transaction
+conn.commit()
+
+# Close cursor and connection
+cur.close()
+conn.close()
+This query inserts products into the stock table. Each tuple in the products_data list represents a product's name, quantity, and price.
+
+You can copy and paste these queries into your PostgreSQL client or your Python script using psycopg2 to interact with the stock table. Ensure to replace the placeholders with actual values as needed (e.g., database connection details, product data).
+
+
+
+
+

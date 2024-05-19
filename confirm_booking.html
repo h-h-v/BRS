@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <title>Confirm Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details h2 {
+            margin: 0 0 10px 0;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .total {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .confirm-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .confirm-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Booking Confirmation</h1>
+        </div>
+        <div class="details">
+            <h2>Bus Details</h2>
+            <p><strong>Bus Name:</strong> {{ bus_details.bus_name }}</p>
+            <p><strong>From:</strong> {{ bus_details.from_location }}</p>
+            <p><strong>To:</strong> {{ bus_details.to_location }}</p>
+            <p><strong>Travel Date:</strong> {{ bus_details.date }}</p>
+        </div>
+        <div class="details">
+            <h2>Passenger Details</h2>
+            {% for seat, passenger in passengers.items() %}
+                <p><strong>Seat {{ seat }}:</strong> {{ passenger.name }}, {{ passenger.age }}, {{ passenger.gender }}</p>
+            {% endfor %}
+        </div>
+        <div class="total">
+            <p>Total Price: &#8377;{{ total_price }}</p>
+        </div>
+        <a href="/payment" class="confirm-button">Proceed to Payment</a>
+    </div>
+</body>
+</html>

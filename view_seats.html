@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logi.png') }}" type="image/x-icon">
+    <title>View Seats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .logo {
+            width: 100px;
+        }
+        nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+        .login-button {
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .location-info {
+            margin: 20px 0;
+        }
+        h1 {
+            text-align: center;
+        }
+        #seatContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .deck {
+            margin-bottom: 20px;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        .seat {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #000;
+            margin: 5px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 30px;
+            background-color: white;
+        }
+        .seat.booked {
+            background-color: #d3d3d3;
+            cursor: not-allowed;
+        }
+        .seat.selected {
+            background-color: green;
+        }
+        .seat.female {
+            background-color: pink;
+        }
+        .seat.male {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="logo">
+        <nav id="navBar">
+            <a href="/">Home</a>
+            <a href="#">Book Tickets</a>
+            <a href="#">My Bookings</a>
+            <a href="#">Help</a>
+            <button class="login-button" id="loginBtn">Login</button>
+        </nav>
+    </header>
+    <div class="location-info">
+        <p>From: {{ bus_details.from_location }}</p>
+        <p>To: {{ bus_details.to_location }}</p>
+    </div>
+    <h1>View Seats - {{ bus_details.bus_name }}</h1>
+    <div id="seatContainer">
+        <div class="deck" id="lowerDeck">
+            <h2>Lower Deck</h2>
+            <!-- Lower deck rows will be generated here -->
+        </div>
+        <div class="deck" id="upperDeck">
+            <h2>Upper Deck</h2>
+            <!-- Upper deck rows will be generated here -->
+        </div>
+    </div>
+    <button onclick="bookSeats()">Book Selected Seats</button>
+
+    <script>
+        var seatData = [
+            { id: 1, row: 'A', number: 1, deck: 'lower', booked: false, gender: null },
+            { id: 2, row: 'A', number: 2, deck: 'lower', booked: false, gender: null },
+            { id: 3, row: 'A', number: 3, deck: 'lower', booked: false, gender: 'female' },
+            { id: 4, row: 'A', number: 4, deck: 'lower', booked: false, gender: 'female' },
+            { id: 5, row: 'B', number: 1, deck: 'lower', booked: false, gender: null },
+            { id: 6, row: 'B', number: 2, deck: 'lower', booked: false, gender: 'male' },
+            { id: 7, row: 'B', number: 3, deck: 'lower', booked: false, gender: null },
+            { id: 8, row: 'B', number: 4, deck: 'lower', booked: false, gender: null },
+            { id: 9, row: 'C', number: 1, deck: 'lower', booked: false, gender: null },
+            { id: 10, row: 'C', number: 2, deck: 'lower', booked: false, gender: null },
+            { id: 11, row: 'C', number: 3, deck: 'lower', booked: false, gender: null },
+            { id: 12, row: 'C', number: 4, deck: 'lower', booked: false, gender: null },
+            { id: 13, row: 'A', number: 1, deck: 'upper', booked: false, gender: null },
+            { id: 14, row: 'A', number: 2, deck: 'upper', booked: false, gender: null },
+            { id: 15, row: 'A', number: 3, deck: 'upper', booked: false, gender: 'female' },
+            { id: 16, row: 'A', number: 4, deck: 'upper', booked: false, gender: 'female' },
+            { id: 17, row: 'B', number: 1, deck: 'upper', booked: false, gender: null },
+            { id: 18, row: 'B', number: 2, deck: 'upper', booked: false, gender: 'male' },
+            { id: 19, row: 'B', number: 3, deck: 'upper', booked: false, gender: null },
+            { id: 20, row: 'B', number: 4, deck: 'upper', booked: false, gender: null },
+            { id: 21, row: 'C', number: 1, deck: 'upper', booked: false, gender: null },
+            { id: 22, row: 'C', number: 2, deck: 'upper', booked: false, gender: null },
+            { id: 23, row: 'C', number: 3, deck: 'upper', booked: false, gender: null },
+            { id: 24, row: 'C', number: 4, deck: 'upper', booked: false, gender: null }
+        ];
+
+        function generateSeatLayout() {
+            var lowerDeck = document.getElementById('lowerDeck');
+            var upperDeck = document.getElementById('upperDeck');
+
+            seatData.forEach(function(seat) {
+                var seatElement = document.createElement('div');
+                seatElement.className = 'seat';
+                seatElement.dataset.seatId = seat.id;
+                seatElement.textContent = seat.row + seat.number;
+
+                if (seat.booked) {
+                    seatElement.classList.add('booked');
+                } else {
+                    if (seat.gender === 'female') {
+                        seatElement.classList.add('female');
+                    } else if (seat.gender === 'male') {
+                        seatElement.classList.add('male');
+                    }
+
+                    seatElement.addEventListener('click', function() {
+                        if (!seatElement.classList.contains('booked')) {
+                            seatElement.classList.toggle('selected');
+                        }
+                    });
+                }
+
+                if (seat.deck === 'lower') {
+                    lowerDeck.appendChild(seatElement);
+                } else if (seat.deck === 'upper') {
+                    upperDeck.appendChild(seatElement);
+                }
+            });
+        }
+
+        function bookSeats() {
+            var selectedSeats = document.querySelectorAll('.seat.selected');
+            var selectedSeatIds = Array.from(selectedSeats).map(function(seat) {
+                return seat.dataset.seatId;
+            });
+            if (selectedSeatIds.length > 0) {
+                window.location.href = '/add-passenger?seats=' + selectedSeatIds.join(',');
+            } else {
+                alert('Please select at least one seat.');
+            }
+        }
+
+        window.onload = generateSeatLayout;
+    </script>
+</body>
+</html>
